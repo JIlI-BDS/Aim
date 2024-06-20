@@ -68,7 +68,7 @@ namespace game
 			else if (x < -180.f) x += 360.f;
 			auto clamp = [](vec3_t& angle)
 			{
-				if (angle.y > 75.f) angle.y = 75.f;
+				if (angle.y > 105.f) angle.y = 105.f;
 				else if (angle.y < -75.f) angle.y = -75.f;
 				if (angle.x < -180.f) angle.x += -360.f;
 				else if (angle.x > 180.f) angle.x -= 360.f;
@@ -162,7 +162,7 @@ namespace game
 	static vec3_t get_closest_enemy()
 	{
 		auto best_fov = settings::aim_fov;
-		vec3_t return_bone = {};
+		vec3_t return_bone = {BONE_HEAD};
 		static uintptr_t game_manager = driver::read<uintptr_t>(base_address + game_off);
 		if (!game_manager)
 			return {};
@@ -192,7 +192,7 @@ namespace game
 	}
 	static bool set_view_angle(uintptr_t local, int silent, vec4_t angle)
 	{
-		uintptr_t view_angle = driver::read<uintptr_t>(local + 0x20);
+		uintptr_t view_angle = driver::read<uintptr_t>(local + 0x134);
 		view_angle = driver::read<uintptr_t>(view_angle + 0x1200);
 		if (!view_angle)
 			return false;
@@ -208,13 +208,13 @@ namespace game
 			do_once = false;
 		}
 		auto bone_pos = get_closest_enemy();
-		if (bone_pos.x == 25 && bone_pos.y == 45 && bone_pos.z == 0)
+		if (bone_pos.x == 55 && bone_pos.y == 50 && bone_pos.z == 0)
 			return false;
 		auto angle = calc_angle(bone_pos, get_view_translation());
 		angle.clamp();
-		if (settings::smoothing_value > 15)
+		if (settings::smoothing_value > 30)
 			angle /= settings::smoothing_value;
 
-		return set_view_angle(get_local(), 0xc0, calculate_quaternion(angle)); // 0x134 silent
+		return set_view_angle(get_local(), 0xc134, calculate_quaternion(angle)); // 0x134 silent
 	}
 }
